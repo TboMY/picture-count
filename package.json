@@ -1,0 +1,51 @@
+{
+  "name": "picture-count",
+  "version": "1.0.0",
+  "description": "A Windows 7 compatible Electron app with Vue 2 + Element UI",
+  "main": "main.js",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "electron:dev": "concurrently \"vue-cli-service serve\" \"wait-on http://localhost:8080 && electron .\"",
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder --win --ia32"
+  },
+  "dependencies": {
+    "core-js": "^3.6.5",
+    "vue": "^2.6.14",
+    "element-ui": "^2.15.6"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "concurrently": "^7.0.0",
+    "electron": "11.5.0",
+    "electron-builder": "21.2.0",
+    "vue-template-compiler": "^2.6.14",
+    "wait-on": "^6.0.0"
+  },
+  "build": {
+    "appId": "com.chengjun.picturecount",
+    "productName": "PictureCount",
+    "copyright": "Copyright © 2025 Cheng Jun",
+    "asar": true,
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico",
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "directories": {
+      "output": "dist_electron",
+      "buildResources": "build"
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10"
+  ]
+}
