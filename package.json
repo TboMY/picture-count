@@ -13,6 +13,7 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "element-ui": "^2.15.6",
+    "exifr": "^7.1.3",
     "probe-image-size": "^7.2.3",
     "vue": "^2.6.14",
     "xlsx": "^0.18.5"
@@ -28,17 +29,18 @@
   },
   "build": {
     "appId": "com.chengjun.picturecount",
-    "productName": "PictureCount",
+    "productName": "图像统计",
     "copyright": "Copyright © 2025 Cheng Jun",
     "asar": true,
     "win": {
       "target": "nsis",
-      "icon": "build/icon.ico",
+      "icon": "build/favicon1.ico",
       "requestedExecutionLevel": "asInvoker"
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false
     },
     "directories": {
       "output": "dist_electron",

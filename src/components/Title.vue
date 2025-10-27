@@ -4,7 +4,7 @@
   @Author：cj
 -->
 <template>
-  <h2 class="title">📄 扫描图片纸张统计工具</h2>
+  <h2 class="title">📄 幅面统计工具</h2>
 </template>
 
 <script>

@@ -1,5 +1,6 @@
 <script>
 import { DEFAULT_DPI, MISTAKE, PAPER_LEN, PAPER_OPTIONS } from '../constant'
+import { throttle } from '../utils'
 
 export default {
   name: 'TopGroups',
@@ -25,7 +26,6 @@ export default {
   emits: [ 'analyze' ],
   methods: {
     async selectFolder () {
-      console.log('123')
       // 调用 Electron 主进程选择文件夹
       let folder = await window.electronAPI.selectFolder()
       if (folder) {
@@ -41,10 +41,10 @@ export default {
         return
       }
 
-      if (!this.defaultDpi) {
-        this.$message.error('固定DPI值必填,请设置固定DPI值')
-        return
-      }
+      // if (!this.defaultDpi) {
+      //   this.$message.error('固定DPI值必填,请设置固定DPI值')
+      //   return
+      // }
 
       if (!this.len.a4 || !this.len.a3 || !this.len.a2 || !this.len.a1 || !this.len.a0) {
         this.$message.error('请设置A4-A0长度值')
@@ -67,9 +67,13 @@ export default {
 
       this.$emit('analyze', params)
 
-      console.log('默认DPI:', this.defaultDpi)
+      // console.log('默认DPI:', this.defaultDpi)
     }
 
+  },
+  created () {
+    this.throttleSubmit = throttle(this.submit, 1000)
+    this.throttleSelectFolder = throttle(this.selectFolder,1000)
   }
 }
 </script>
@@ -83,20 +87,21 @@ export default {
         <label class="form-label">图片文件夹:</label>
         <el-input
             v-model="input"
-            placeholder="请输入图片所在文件夹的绝对路径"
-            style="width: 240px"
+            placeholder="请输入文件夹路径"
+            size="small"
+            style="width: 200px"
         />
         <el-button
             type="primary"
-            @click="selectFolder"
-            size="medium"
+            @click="throttleSelectFolder"
+            size="small"
         >选择文件夹
         </el-button>
       </div>
 
       <!-- 默认DPI设置 -->
       <div class="form-item">
-        <label class="form-label">固定DPI(必填):</label>
+        <label class="form-label">默认DPI:</label>
         <el-input-number
             v-model.number="defaultDpi"
             placeholder="默认DPI值"
@@ -105,7 +110,8 @@ export default {
             :step="DEFAULT_DPI.step"
             :precision="0"
             controls-position="right"
-            style="width: 140px"
+            size="small"
+            style="width: 120px"
         />
       </div>
 
@@ -120,10 +126,11 @@ export default {
             :max="MISTAKE.max"
             :step="MISTAKE.step"
             controls-position="right"
-            style="width: 140px"/>
+            size="small"
+            style="width: 120px"/>
       </div>
 
-      <el-button type="primary" @click="submit"> 开 始</el-button>
+      <el-button type="primary" size="small" @click="throttleSubmit"> 开 始</el-button>
     </div>
 
     <!-- 第二行：A4-A0长度设置 -->
@@ -139,7 +146,8 @@ export default {
             :max="PAPER_OPTIONS.max"
             :step="PAPER_OPTIONS.step"
             controls-position="right"
-            style="width: 140px"/>
+            size="small"
+            style="width: 120px"/>
       </div>
 
       <div class="form-item">
@@ -152,7 +160,8 @@ export default {
             :max="PAPER_OPTIONS.max"
             :step="PAPER_OPTIONS.step"
             controls-position="right"
-            style="width: 140px"/>
+            size="small"
+            style="width: 120px"/>
       </div>
 
       <div class="form-item">
@@ -165,7 +174,8 @@ export default {
             :max="PAPER_OPTIONS.max"
             :step="PAPER_OPTIONS.step"
             controls-position="right"
-            style="width: 140px"/>
+            size="small"
+            style="width: 120px"/>
       </div>
 
       <div class="form-item">
@@ -178,7 +188,8 @@ export default {
             :max="PAPER_OPTIONS.max"
             :step="PAPER_OPTIONS.step"
             controls-position="right"
-            style="width: 140px"/>
+            size="small"
+            style="width: 120px"/>
       </div>
 
       <div class="form-item">
@@ -191,7 +202,8 @@ export default {
             :max="PAPER_OPTIONS.max"
             :step="PAPER_OPTIONS.step"
             controls-position="right"
-            style="width: 140px"/>
+            size="small"
+            style="width: 120px"/>
       </div>
     </div>
   </div>
@@ -210,26 +222,30 @@ export default {
 .form-row {
   display: flex;
   align-items: center;
-  gap: 32px;
-  flex-wrap: wrap;
-  justify-content: center;
+  gap: 16px;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  overflow-x: auto;
+  min-width: 0;
 }
 
 .form-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .form-label {
   font-size: 14px;
   color: #495057;
   font-weight: 500;
-  min-width: 120px;
+  width: 100px;
   box-sizing: border-box;
   padding-right: 10px;
   white-space: nowrap;
   text-align: right;
+  flex-shrink: 0;
 }
 
 </style>

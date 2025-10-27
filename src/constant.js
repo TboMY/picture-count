@@ -16,7 +16,7 @@ export const PAPER_OPTIONS = {
   precision: 2,
   min: 1,
   max: 10000,
-  step: 1
+  step: 10
 }
 
 // export const PAPER_STANDARD = {
@@ -40,4 +40,15 @@ export const MISTAKE = {
   max: 10000,
   step: 1,
   precision: 0
+}
+
+export const thanZeroName = 'plus'
+
+export const tableParams={
+  numberWidth:80,
+  pathWidth:200,
+  indexWidth:60,
+  totalA4Width:120,
+  totalImagesWidth:120,
+
 }

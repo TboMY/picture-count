@@ -10,28 +10,23 @@
 
     <!-- 主内容区 -->
     <el-main>
-      <!-- 未选择文件夹 -->
-      <div v-if="!folderPath" class="empty">
-        <i class="el-icon-document" style="font-size: 100px; color: #909399;"></i>
-        <p style="margin-top: 20px; color: #606266; font-size: 20px">请选择文件夹</p>
-      </div>
-
-      <div v-else>
+      <div>
         <!-- 按文件夹分组的详细列表 -->
         <el-card shadow="never" style="width: 100%">
           <div slot="header">
-            <span>按文件夹统计结果</span>
-            <el-button type="primary" style="float: right;" size="mini" @click="exportResults">导出结果</el-button>
+            <span>按文件夹分类统计结果</span>
+            <el-button type="primary" style="float: right;" size="mini" @click="throttleExportResults">导出结果
+            </el-button>
           </div>
           <el-table :data="tableData" border stripe style="width: 100%" table-layout="fixed" :height="600">
-            <el-table-column type="index" label="序号" width="60px" align="center">
+            <el-table-column type="index" label="序号" :width="tableParams.indexWidth" align="center">
               <template slot-scope="scope">
                   <span :class="{ 'total-row': scope.row.folderPath === '合计' }">
                     {{ scope.$index + 1 }}
                   </span>
               </template>
             </el-table-column>
-            <el-table-column prop="folderPath" min-width="400px" label="图像路径" align="center" show-overflow-tooltip>
+            <el-table-column prop="folderPath" :min-width="tableParams.pathWidth" label="图像路径" align="center" show-overflow-tooltip>
               <template slot-scope="scope">
                   <span :class="{ 'total-row': scope.row.folderPath === '合计' }">
 <!--                    {{ scope.row.folderPath === '合计' ? '合计' : '..\\' + scope.row.folderPath }}-->
@@ -39,49 +34,56 @@
                   </span>
               </template>
             </el-table-column>
-            <el-table-column prop="a4" label="A4页" min-width="150px" align="center">
+            <el-table-column prop="a4" label="≤A4页" :min-width="tableParams.numberWidth" align="center">
               <template slot-scope="scope">
                   <span :class="{ 'total-row': scope.row.folderPath === '合计' }">
                     {{ scope.row.a4 }}
                   </span>
               </template>
             </el-table-column>
-            <el-table-column prop="a3" label="A3页" min-width="150px" align="center">
+            <el-table-column prop="a3" label="A3页" :min-width="tableParams.numberWidth" align="center">
               <template slot-scope="scope">
                   <span :class="{ 'total-row': scope.row.folderPath === '合计' }">
                     {{ scope.row.a3 }}
                   </span>
               </template>
             </el-table-column>
-            <el-table-column prop="a2" label="A2页" min-width="150px" align="center">
+            <el-table-column prop="a2" label="A2页" :min-width="tableParams.numberWidth" align="center">
               <template slot-scope="scope">
                   <span :class="{ 'total-row': scope.row.folderPath === '合计' }">
                     {{ scope.row.a2 }}
                   </span>
               </template>
             </el-table-column>
-            <el-table-column prop="a1" label="A1页" min-width="150px" align="center">
+            <el-table-column prop="a1" label="A1页" :min-width="tableParams.numberWidth" align="center">
               <template slot-scope="scope">
                   <span :class="{ 'total-row': scope.row.folderPath === '合计' }">
                     {{ scope.row.a1 }}
                   </span>
               </template>
             </el-table-column>
-            <el-table-column prop="a0" label="A0页" min-width="150px" align="center">
+            <el-table-column prop="a0" label="A0页" :min-width="tableParams.numberWidth" align="center">
               <template slot-scope="scope">
                   <span :class="{ 'total-row': scope.row.folderPath === '合计' }">
                     {{ scope.row.a0 }}
                   </span>
               </template>
             </el-table-column>
-            <el-table-column prop="totalA4Equivalent" label="折算A4页" min-width="150px" align="center">
+            <el-table-column :prop="thanZeroName" label=">A0页" :min-width="tableParams.numberWidth" align="center">
+              <template slot-scope="scope">
+                  <span :class="{ 'total-row': scope.row.folderPath === '合计' }">
+                    {{ scope.row[thanZeroName] }}
+                  </span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="totalA4Equivalent" label="折算A4页" :min-width="tableParams.totalA4Width" align="center">
               <template slot-scope="scope">
                   <span :class="{ 'total-row': scope.row.folderPath === '合计' }">
                     {{ scope.row.totalA4Equivalent }}
                   </span>
               </template>
             </el-table-column>
-            <el-table-column prop="totalImages" label="图像数量" min-width="150px" align="center">
+            <el-table-column prop="totalImages" label="图像数量" :min-width="tableParams.totalImagesWidth" align="center">
               <template slot-scope="scope">
                   <span :class="{ 'total-row': scope.row.folderPath === '合计' }">
                     {{ scope.row.totalImages }}
@@ -98,6 +100,8 @@
 <script>
 import Title from './components/Title.vue'
 import TopGroups from './components/TopGroups.vue'
+import { throttle } from './utils'
+import { tableParams, thanZeroName } from './constant'
 
 export default {
   name: 'App',
@@ -105,17 +109,22 @@ export default {
 
   data () {
     return {
+      tableData: [],
       folderPath: '',
       isScanning: false,
       scanProgress: 0,
       currentFile: '',
-      scanStatus: '',
-      tableData: [],
       totalFiles: 0,
       processedFiles: 0
     }
   },
   computed: {
+    thanZeroName(){
+      return thanZeroName
+    },
+    tableParams(){
+      return tableParams
+    },
     totalImages () {
       const totalRow = this.tableData.find(folder => folder.folderPath === '合计')
       return totalRow ? totalRow.totalImages : 0
@@ -149,27 +158,31 @@ export default {
 
       try {
         // 设置进度监听
-        window.electronAPI.onScanProgress(( progressData ) => {
-          this.processedFiles = progressData.processed
-          this.totalFiles = progressData.total
-          this.currentFile = progressData.currentFile
-          this.scanProgress = Math.round((progressData.processed / progressData.total) * 100)
-        })
+        // await window.electronAPI.onScanProgress(( progressData ) => {
+        //   this.processedFiles = progressData.processed
+        //   this.totalFiles = progressData.total
+        //   this.currentFile = progressData.currentFile
+        //   this.scanProgress = Math.round((progressData.processed / progressData.total) * 100)
+        // })
 
         // 开始分析
-        const result = await window.electronAPI.analyzeImages(folderPath, form)
-        this.tableData = result
-
-        const totalRow = result.find(folder => folder.folderPath === '合计')
-        this.$message.success(
-            `扫描完成！共处理 ${ totalRow ? totalRow.totalImages : 0 } 个文件，${ result.length - 1 } 个文件夹`)
-
+        const { success, data, message } = await window.electronAPI.analyzeImages(folderPath, form)
+        if (success) {
+          this.tableData = data
+          const totalRow = data[data.length - 1]
+          this.$message.success(
+              `扫描完成！共处理 ${ totalRow ? totalRow.totalImages : 0 } 个文件，${ data.length - 1 } 个文件夹`)
+        } else {
+          throw new Error(message)
+        }
       } catch (error) {
-        console.error('分析失败:', error)
-        this.$message.error('分析失败: ' + error.message)
+        this.$message({
+          message: '操作失败: ' + error.message,
+          type: 'error',
+          duration: 3000
+        })
       } finally {
         this.isScanning = false
-        this.scanStatus = 'success'
         // 清理进度监听
         window.electronAPI.removeScanProgressListener()
       }
@@ -180,11 +193,26 @@ export default {
         return
       }
       try {
-        const resp = await window.electronAPI.exportResults(this.tableData)
+        const resp = await window.electronAPI.exportResults(this.tableData, this.folderPath)
         if (resp.success) {
-          this.$message.success(resp.message, { duration: 3000 })
+          this.$message({
+            message: resp.message,
+            type: 'success',
+            duration: 3000
+          })
         } else {
-          this.$message.error(resp.message, { duration: 3000 })
+          if (resp.type) {
+            this.$message({
+              message: resp.message,
+              type: 'warning'
+            })
+            return
+          }
+
+          this.$message({
+            message: resp.message,
+            type: 'error'
+          })
         }
       } catch (e) {
         this.$message.error(e)
@@ -210,6 +238,10 @@ export default {
           return '已识别'
       }
     }
+  },
+  created () {
+    this.throttleExportResults = throttle(this.exportResults, 1500)
+
   }
 }
 </script>
