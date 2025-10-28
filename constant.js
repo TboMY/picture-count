@@ -41,7 +41,7 @@ const columns = [
     width: 80
   },
   {
-    header: '>A0页',
+    header: 'A0⁺页',
     key: thanZeroName,
     width: 80
   },
@@ -57,8 +57,6 @@ const columns = [
   }
 ]
 
-// XResolution
-// YResolution
 
 module.exports = {
   rate: Number(Math.sqrt(2).toFixed(5)),

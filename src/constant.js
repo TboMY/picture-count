@@ -4,12 +4,15 @@
  *
  */
 
+export const thanZeroName = 'plus'
+
 export const PAPER_LEN = {
   a4: 297,
   a3: 420,
   a2: 594,
   a1: 841,
-  a0: 1189
+  a0: 1189,
+  [thanZeroName]:1500,
 }
 
 export const PAPER_OPTIONS = {
@@ -42,13 +45,10 @@ export const MISTAKE = {
   precision: 0
 }
 
-export const thanZeroName = 'plus'
-
 export const tableParams={
-  numberWidth:80,
-  pathWidth:200,
+  numberWidth:60,
+  pathWidth:120,
   indexWidth:60,
-  totalA4Width:120,
-  totalImagesWidth:120,
-
+  totalA4Width:80,
+  totalImagesWidth:80,
 }

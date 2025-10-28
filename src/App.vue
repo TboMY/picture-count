@@ -18,7 +18,8 @@
             <el-button type="primary" style="float: right;" size="mini" @click="throttleExportResults">导出结果
             </el-button>
           </div>
-          <el-table :data="tableData" border stripe style="width: 100%" table-layout="fixed" :height="600">
+          <el-table :data="tableData" stripe style="width: 100%;font-size: 13px" table-layout="fixed"
+                    :height="500">
             <el-table-column type="index" label="序号" :width="tableParams.indexWidth" align="center">
               <template slot-scope="scope">
                   <span :class="{ 'total-row': scope.row.folderPath === '合计' }">
@@ -26,7 +27,8 @@
                   </span>
               </template>
             </el-table-column>
-            <el-table-column prop="folderPath" :min-width="tableParams.pathWidth" label="图像路径" align="center" show-overflow-tooltip>
+            <el-table-column prop="folderPath" :min-width="tableParams.pathWidth" label="图像路径" align="center"
+                             show-overflow-tooltip>
               <template slot-scope="scope">
                   <span :class="{ 'total-row': scope.row.folderPath === '合计' }">
 <!--                    {{ scope.row.folderPath === '合计' ? '合计' : '..\\' + scope.row.folderPath }}-->
@@ -34,7 +36,7 @@
                   </span>
               </template>
             </el-table-column>
-            <el-table-column prop="a4" label="≤A4页" :min-width="tableParams.numberWidth" align="center">
+            <el-table-column prop="a4" label="A4页" :min-width="tableParams.numberWidth" align="center">
               <template slot-scope="scope">
                   <span :class="{ 'total-row': scope.row.folderPath === '合计' }">
                     {{ scope.row.a4 }}
@@ -69,21 +71,23 @@
                   </span>
               </template>
             </el-table-column>
-            <el-table-column :prop="thanZeroName" label=">A0页" :min-width="tableParams.numberWidth" align="center">
+            <el-table-column :prop="thanZeroName" label="A0⁺页" :min-width="tableParams.numberWidth" align="center">
               <template slot-scope="scope">
                   <span :class="{ 'total-row': scope.row.folderPath === '合计' }">
                     {{ scope.row[thanZeroName] }}
                   </span>
               </template>
             </el-table-column>
-            <el-table-column prop="totalA4Equivalent" label="折算A4页" :min-width="tableParams.totalA4Width" align="center">
+            <el-table-column prop="totalA4Equivalent" label="折算A4页" :min-width="tableParams.totalA4Width"
+                             align="center">
               <template slot-scope="scope">
                   <span :class="{ 'total-row': scope.row.folderPath === '合计' }">
                     {{ scope.row.totalA4Equivalent }}
                   </span>
               </template>
             </el-table-column>
-            <el-table-column prop="totalImages" label="图像数量" :min-width="tableParams.totalImagesWidth" align="center">
+            <el-table-column prop="totalImages" label="图像数量" :min-width="tableParams.totalImagesWidth"
+                             align="center">
               <template slot-scope="scope">
                   <span :class="{ 'total-row': scope.row.folderPath === '合计' }">
                     {{ scope.row.totalImages }}
@@ -119,10 +123,10 @@ export default {
     }
   },
   computed: {
-    thanZeroName(){
+    thanZeroName () {
       return thanZeroName
     },
-    tableParams(){
+    tableParams () {
       return tableParams
     },
     totalImages () {
@@ -217,37 +221,15 @@ export default {
       } catch (e) {
         this.$message.error(e)
       }
-    },
-    getStatusType ( paperType ) {
-      switch (paperType) {
-        case 'Error':
-          return 'danger'
-        case 'Unknown':
-          return 'warning'
-        default:
-          return 'success'
-      }
-    },
-    getStatusText ( paperType ) {
-      switch (paperType) {
-        case 'Error':
-          return '错误'
-        case 'Unknown':
-          return '需确认'
-        default:
-          return '已识别'
-      }
     }
   },
   created () {
     this.throttleExportResults = throttle(this.exportResults, 1500)
-
   }
 }
 </script>
 
 <style>
-
 body, html {
   margin: 0;
   padding: 0;
@@ -262,36 +244,9 @@ body, html {
   background-color: #f5f7fa;
 }
 
-.empty {
-  padding-top: 100px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.stat-item {
-  text-align: center;
-}
-
-.stat-value {
-  font-size: 24px;
-  font-weight: bold;
-  color: #409EFF;
-}
-
-.stat-label {
-  color: #606266;
-  margin-top: 4px;
-}
-
-.has-dpi {
-  color: #67C23A;
-  font-weight: bold;
-}
-
 .total-row {
   font-weight: bold;
   color: #409EFF;
 }
+
 </style>
